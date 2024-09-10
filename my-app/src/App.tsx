@@ -23,51 +23,17 @@ function App() {
   const [score, setScore] = useState(0);
 
   useInterval(() => runGame(), delay);
-  useEffect(() => {
-    let fruit = document.getElementById("fruit") as HTMLCanvasElement;
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext("2d");
-      if (ctx) {
-        ctx.setTransform(scale, 0, 0, scale, 0, 0);
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-        // Draw the snake
-        snake.forEach(([x, y], index) => {
-          if (index === 0) {
-            // Head of the snake
-            ctx.fillStyle = "#6B8E23";
-            ctx.beginPath();
-            ctx.arc(x + 0.5, y + 0.5, 0.5, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Draw eyes on the head
-            ctx.fillStyle = "#fff";
-            ctx.beginPath();
-            ctx.arc(x + 0.7, y + 0.3, 0.1, 0, Math.PI * 2);
-            ctx.arc(x + 0.3, y + 0.3, 0.1, 0, Math.PI * 2);
-            ctx.fill();
-          } else if (index === snake.length - 1) {
-            // Tail of the snake
-            ctx.fillStyle = "#9ACD32";
-            ctx.beginPath();
-            ctx.arc(x + 0.5, y + 0.5, 0.4, 0, Math.PI * 2); // Draw tail as a smaller circle
-            ctx.fill();
-          } else {
-            // Body of the snake
-            ctx.fillStyle = "#8FBC8F"; // medium green color for the body
-            ctx.fillRect(x, y, 1, 1); // Draw the body segment as a square
-          }
-        });
-
-        // Draw the fruit (apple)
-        ctx.drawImage(fruit, apple[0], apple[1], 1, 1);
-      }
-    }
-  }, [snake, apple, gameOver]);
   function handleSetScore() {}
 
-  function play() {}
+  function play() {
+    setSnake(initialSnake);
+    setApple(initialApple);
+    setDirection([1, 0]);
+    setDelay(timeDelay);
+    setScore(0);
+    setGameOver(false);
+  }
 
   function checkCollision(head: number[]) {}
 
@@ -75,7 +41,23 @@ function App() {
 
   function runGame() {}
 
-  function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {}
+  function changeDirection(e: React.KeyboardEvent<HTMLDivElement>) {
+    switch (e.key) {
+      case "ArrowLeft":
+        // Prevent reversing direction
+        if (direction[0] !== 1) setDirection([-1, 0]);
+        break;
+      case "ArrowUp":
+        if (direction[1] !== 1) setDirection([0, -1]);
+        break;
+      case "ArrowRight":
+        if (direction[0] !== -1) setDirection([1, 0]);
+        break;
+      case "ArrowDown":
+        if (direction[1] !== -1) setDirection([0, 1]);
+        break;
+    }
+  }
 
   return (
     <div onKeyDown={(e) => changeDirection(e)}>
